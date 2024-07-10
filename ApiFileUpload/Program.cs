@@ -1,4 +1,5 @@
 using ApiFileUpload;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<FileService>(); 
+builder.Services.AddSingleton<FileService>();
+builder.Services.Configure<StorageAccountOptions>(builder.Configuration.GetSection("StorageAccount"));
 
 var app = builder.Build();
 

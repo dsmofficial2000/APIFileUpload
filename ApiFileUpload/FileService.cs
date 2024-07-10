@@ -1,21 +1,30 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
 using Microsoft.Extensions.Azure;
+using Microsoft.Extensions.Options;
 
 namespace ApiFileUpload
 {
     public class FileService
     {
-        private readonly string _storageAccount = "StorageAccount";
-        private readonly string _key = "StorageAccountKey";
+        //private readonly string _storageAccount = "StorageAccount";
+        //private readonly string _key = "StorageAccountKey";
         private readonly BlobContainerClient _fileContainer;
 
-        public FileService()
+        public FileService(IOptions<StorageAccountOptions> options)
         {
-            var credential = new StorageSharedKeyCredential (_storageAccount, _key);
-            var blobUri = $"https://{_storageAccount}.blob.core.windows.net";
+            var storageAccount = options.Value.AccountName;
+            var key = options.Value.AccountKey;
+
+            var credential = new StorageSharedKeyCredential(storageAccount, key);
+            var blobUri = $"https://{storageAccount}.blob.core.windows.net";
             var blobServiceClient = new BlobServiceClient(new Uri(blobUri), credential);
             _fileContainer = blobServiceClient.GetBlobContainerClient("files");
+
+            //var credential = new StorageSharedKeyCredential (_storageAccount, _key);
+            //var blobUri = $"https://{_storageAccount}.blob.core.windows.net";
+            //var blobServiceClient = new BlobServiceClient(new Uri(blobUri), credential);
+            //_fileContainer = blobServiceClient.GetBlobContainerClient("files");
         }
 
         public async Task<List<BlobDto>> ListAsync()
